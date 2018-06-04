@@ -10,9 +10,15 @@
             const string key = "hellohowareyou";
 
             Encrypt e = new Encrypt();
-            e.Print();
+            e.PrintTable();
+
+            Console.WriteLine("The Cipher:");
 
             e.EncryptString(phrase, key);
+
+            Console.WriteLine("Decoded:");
+
+            e.DecryptString(key);
 
             Console.Read();
         }
@@ -54,7 +60,7 @@
             }
         }
 
-        public void Print()
+        public void PrintTable()
         {
             for(int y = 0; y < 27; y++)
             {
@@ -120,24 +126,61 @@
                 keyIndex++;
             }
 
-            PrintCipher();
+            Print(cipher);
         }
 
-        public void DecryptString()
+        public void DecryptString(string key)
         {
             Console.WriteLine("Decrypted:");
 
-            foreach(char c in cipher)
+            key = key.ToUpper();
+
+            char[] keyArray = key.ToCharArray();
+            char[] message = new char[cipher.Length];
+
+            int x = 0;
+            int y = 0;
+
+            int keyIndex = 0;
+            int messageIndex = 0;
+
+            foreach (char c in cipher)
             {
-                
+                if (keyIndex > keyArray.Length - 1)
+                    keyIndex = 0;
+
+                y = RecursiveSearch(letters, keyArray[keyIndex], 0) + 1;
+
+                for(int i = 1; i < 26; i++)
+                {
+                    if (table[i, y] == c)
+                        x = i;
+                }
+
+                message[messageIndex] = table[x, 0];
+
+                Debug.WriteLine(table[x, 0]);
+
+                messageIndex++;
+                keyIndex++;
             }
+
+            Print(message);
         }
 
-        private void PrintCipher()
+        private int RecursiveSearch(char[] text, char target, int index)
         {
-            Console.WriteLine("The Cipher:");
+            if (text[index] == target)
+                return index;
+            else
+                return RecursiveSearch(text, target, index + 1);
+        }
 
-            foreach(char c in cipher)
+        private void Print(char[] text)
+        {
+            
+
+            foreach(char c in text)
             {
                 Console.Write(c);
             }
